@@ -59,20 +59,24 @@ app.get("/studentProfile", (req, res) => {
 // Connect Database and Start Server
 const startServer = async () => {
   try {
+    console.log("Starting server initialization...");
     await connectDB();
     
     // Sync indexes
+    console.log("Synchronizing database indexes...");
     const User = require("./models/User");
     await User.syncIndexes();
-    console.log("Database indexes synchronized");
+    console.log("✅ Database indexes synchronized");
     
     // Server
     const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`🚀 Server running and listening on port ${PORT}`);
+      console.log(`Open your browser to: http://localhost:${PORT} (local) or your Render URL`);
     });
   } catch (error) {
-    console.error("Failed to start server:", error.message);
+    console.error("❌ CRITICAL ERROR: Failed to start server!");
+    console.error("Error Detail:", error.stack || error.message);
     process.exit(1);
   }
 };
