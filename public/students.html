@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Students | NIET SMS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="container-fluid p-0">
+  <div class="row g-0">
+    <!-- Sidebar -->
+    <nav class="col-md-3 col-lg-2 sidebar">
+      <div class="position-sticky">
+        <h4 class="text-center mb-4 px-3"><i class="fas fa-university me-2"></i>NIET SMS</h4>
+        <ul class="nav flex-column">
+          <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/students.html"><i class="fas fa-user-graduate"></i> Manage Students</a></li>
+          <li class="nav-item"><a class="nav-link" href="/register"><i class="fas fa-user-plus"></i> Add Student</a></li>
+          <li class="nav-item"><a class="nav-link" href="/attendance"><i class="fas fa-calendar-check"></i> Attendance</a></li>
+          <li class="nav-item"><a class="nav-link" href="/marks"><i class="fas fa-file-invoice"></i> Marks Entry</a></li>
+          <li class="nav-item"><a class="nav-link" href="/fees"><i class="fas fa-rupee-sign"></i> Fees Status</a></li>
+        </ul>
+        <hr class="mx-3 bg-light opacity-25">
+        <div class="px-3"><button class="btn btn-outline-danger w-100 mt-3 btn-modern" id="logoutBtn">Logout</button></div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="content-wrapper col-md-9 ms-sm-auto col-lg-10">
+      <div class="interactive-card mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <h3 class="fw-bold m-0 text-primary"><i class="fas fa-users-cog me-2"></i>Student Records</h3>
+          <div class="input-group w-50">
+            <span class="input-group-text bg-white border-end-0 rounded-start-pill"><i class="bi bi-search"></i></span>
+            <input type="text" id="studentSearch" class="form-control border-start-0 rounded-end-pill" placeholder="Search by name or roll number...">
+          </div>
+        </div>
+      </div>
+
+      <div class="modern-table table-responsive">
+        <table class="table table-hover align-middle mb-0" id="studentTable">
+          <thead>
+            <tr>
+              <th>Profile</th>
+              <th>Full Name</th>
+              <th>Roll Number</th>
+              <th>Class & Sec</th>
+              <th>Email</th>
+              <th>Password</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody><!-- Loaded by JS --></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Edit Modal (Restyled) -->
+<div class="modal fade" id="editStudentModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered"> <!-- Made modal larger for more fields -->
+    <div class="modal-content border-0 rounded-4 shadow">
+      <div class="modal-header bg-primary text-white rounded-top-4">
+        <h5 class="modal-title">Update Student Information</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <form id="editStudentForm">
+          <input type="hidden" id="editStudentId">
+          <div class="row">
+            <div class="col-md-6 mb-3"><label class="small fw-bold text-muted">NAME</label><input type="text" class="form-control" id="editName" required></div>
+            <div class="col-md-6 mb-3"><label class="small fw-bold text-muted">EMAIL ADDRESS</label><input type="email" class="form-control" id="editEmail" required></div>
+          </div>
+          <div class="row">
+            <div class="col-md-4 mb-3"><label class="small fw-bold text-muted">ROLL NO</label><input type="text" class="form-control" id="editRoll" required></div>
+            <div class="col-md-4 mb-3"><label class="small fw-bold text-muted">CLASS</label><input type="text" class="form-control" id="editClass" required></div>
+            <div class="col-md-4 mb-3"><label class="small fw-bold text-muted">SECTION</label><input type="text" class="form-control" id="editSection" required></div>
+          </div>
+          <div class="mb-3"><label class="small fw-bold text-muted">SYSTEM PASSWORD</label><input type="text" class="form-control" id="editPassword" required></div>
+          <hr class="my-4 opacity-25">
+          <div class="row">
+            <div class="col-md-6 mb-3"><label class="small fw-bold text-muted">FATHER'S NAME</label><input type="text" class="form-control" id="editFather"></div>
+            <div class="col-md-6 mb-3"><label class="small fw-bold text-muted">MOTHER'S NAME</label><input type="text" class="form-control" id="editMother"></div>
+          </div>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label class="small fw-bold text-muted">GENDER</label>
+              <select class="form-select" id="editGender">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="col-md-4 mb-3"><label class="small fw-bold text-muted">BLOOD GROUP</label><input type="text" class="form-control" id="editBlood"></div>
+            <div class="col-md-4 mb-3"><label class="small fw-bold text-muted">DATE OF BIRTH</label><input type="date" class="form-control" id="editDOB"></div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3"><label class="small fw-bold text-muted">PHONE NUMBER</label><input type="text" class="form-control" id="editPhone"></div>
+            <div class="col-md-6 mb-3"><label class="small fw-bold text-muted">RESIDENTIAL ADDRESS</label><input type="text" class="form-control" id="editAddress"></div>
+          </div>
+          <div class="mb-3"><label class="small fw-bold text-muted">PHOTO</label><input type="file" class="form-control" id="editPhoto"></div>
+          <button type="submit" class="btn btn-primary-modern w-100 mt-3 btn-modern">Update Records</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/students.js"></script>
+</body>
+</html>

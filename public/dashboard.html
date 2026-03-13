@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMS Dashboard | Admin</title>
+  <!-- Bootstrap & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --blue-gradient: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
+      --orange-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --green-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      --sidebar-bg: #1e1e2f;
+      --main-bg: #f4f7fe;
+    }
+
+    body { background-color: var(--main-bg); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+    /* Sidebar Styling */
+    .sidebar {
+      background: var(--sidebar-bg);
+      min-height: 100vh;
+      color: white;
+      padding-top: 20px;
+      box-shadow: 4px 0 10px rgba(90, 93, 77, 0.1);
+    }
+    .sidebar .nav-link {
+      color: #aeb1c1;
+      padding: 12px 20px;
+      border-radius: 8px;
+      margin: 5px 15px;
+      transition: all 0.3s;
+    }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+    .sidebar .nav-link i { margin-right: 10px; }
+
+    /* Dashboard Cards */
+    .stat-card {
+      border: none;
+      border-radius: 20px;
+      color: white;
+      padding: 25px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: default;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    }
+    .stat-card i.bg-icon {
+      position: absolute;
+      right: -10px;
+      bottom: -10px;
+      font-size: 5rem;
+      opacity: 0.2;
+      transform: rotate(-15deg);
+    }
+    .stat-card h2 { font-weight: 800; margin-bottom: 0; }
+    .stat-card h6 { text-transform: uppercase; letter-spacing: 1px; font-weight: 600; opacity: 0.9; }
+
+    .card-students { background: var(--blue-gradient); }
+    .card-attendance { background: var(--orange-gradient); }
+    .card-fees { background: var(--green-gradient); }
+
+    /* Top Navbar */
+    .top-nav {
+      background: white;
+      padding: 15px 30px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+
+    .chart-container {
+      background: white;
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+
+    /* Total students link style */
+    #totalStudents a {
+        color: white !important;
+        text-decoration: none;
+        border-bottom: 2px dashed rgba(255,255,255,0.5);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+    <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+      <div class="position-sticky">
+        <h4 class="text-center mb-4 px-3"><i class="fas fa-university me-2"></i>NIET SMS</h4>
+        <ul class="nav flex-column">
+          <li class="nav-item"><a class="nav-link active" href="/dashboard"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+          <li class="nav-item admin-only"><a class="nav-link" href="/students.html"><i class="fas fa-user-graduate"></i> Manage Students</a></li>
+          <li class="nav-item admin-only"><a class="nav-link" href="/register"><i class="fas fa-user-plus"></i> Add New Student</a></li>
+          <li class="nav-item admin-only"><a class="nav-item nav-link" href="/attendance"><i class="fas fa-calendar-check"></i> Attendance</a></li>
+          <li class="nav-item admin-only"><a class="nav-link" href="/marks"><i class="fas fa-file-invoice"></i> Marks Entry</a></li>
+          <li class="nav-item admin-only"><a class="nav-link" href="/fees"><i class="fas fa-rupee-sign"></i> Fees Status</a></li>
+          <li class="nav-item student-only"><a class="nav-link" href="/studentProfile" id="profileLink"><i class="fas fa-user-circle"></i> My Profile</a></li>
+        </ul>
+        <hr class="mx-3 bg-light">
+        <div class="px-3">
+          <button class="btn btn-outline-danger w-100 mt-3" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+      <div class="top-nav d-flex justify-content-between align-items-center">
+        <h4 class="m-0 fw-bold">Administrative Dashboard</h4>
+        <div class="d-flex align-items-center">
+          <div class="text-end me-3">
+            <span class="d-block fw-bold text-dark" id="userRole">Admin</span>
+            <span class="text-muted small">System Administrator</span>
+          </div>
+          <img id="userAvatar" src="https://ui-avatars.com/api/?name=JH&background=667eea&color=fff" class="rounded-circle" width="45" height="45" style="object-fit: cover;">
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="row admin-only g-4 mb-4">
+        <div class="col-md-4">
+          <div class="stat-card card-students shadow">
+            <h6>Total Enrolled</h6>
+            <h2 id="totalStudents">0</h2>
+            <i class="fas fa-users bg-icon"></i>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-card card-attendance shadow">
+            <h6>Daily Attendance</h6>
+            <h2 id="totalAttendance">0</h2>
+            <i class="fas fa-clock bg-icon"></i>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-card card-fees shadow">
+            <h6>Revenue Collected</h6>
+            <h2 id="totalFees">0</h2>
+            <i class="fas fa-wallet bg-icon"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Student View (When logged in as student) -->
+      <div class="student-only p-5 text-center bg-white rounded-4 shadow-sm border-0 mb-4">
+        <i class="fas fa-graduation-cap text-primary mb-3" style="font-size: 4rem;"></i>
+        <h3>Welcome back, Student!</h3>
+        <p class="text-muted">Stay updated with your academic progress and attendance metrics.</p>
+        <a href="/studentProfile" class="btn btn-primary btn-lg px-5 rounded-pill shadow-sm">View My Profile</a>
+      </div>
+
+      <!-- Charts & Insights -->
+      <div class="admin-only chart-container">
+        <div class="row mb-4 align-items-center g-3">
+          <div class="col-lg-4">
+            <h5 class="fw-bold m-0"><i class="fas fa-chart-bar text-primary me-2"></i>Performance Analysis</h5>
+          </div>
+          <div class="col-lg-4">
+            <div class="input-group">
+              <span class="input-group-text bg-white border-end-0 rounded-start-pill"><i class="fas fa-user-graduate text-muted"></i></span>
+              <select id="studentFilter" class="form-select border-start-0 rounded-end-pill">
+                <option value="">Filter by Student</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="input-group">
+              <span class="input-group-text bg-white border-end-0 rounded-start-pill"><i class="fas fa-book text-muted"></i></span>
+              <select id="subjectFilter" class="form-select border-start-0 rounded-end-pill">
+                <option value="">Filter by Subject</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="bg-light rounded-4 p-3" style="min-height: 300px;">
+          <canvas id="marksChart" height="100"></canvas>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<style>
+  .admin-only, .student-only { display: none; }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/dashboard.js"></script>
+</body>
+</html>
